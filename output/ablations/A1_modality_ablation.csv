@@ -1,0 +1,7 @@
+config,modalities_removed,cindex,ci_lo,ci_hi
+Full (all 4 omics),none,0.7797,0.476,0.5424
+Without mrna,mrna,0.6801,0.4456,0.5097
+Without mirna,mirna,0.7528,0.4809,0.5441
+Without cnv,cnv,0.7817,0.459,0.5181
+Without mutation,mutation,0.7805,0.5143,0.582
+mRNA only,miRNA+CNV+mutation,0.7907,,
