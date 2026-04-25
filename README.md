@@ -6,7 +6,7 @@
 
 > **Causally Grounded Pan-Cancer Survival Prediction from Multi-Omics Molecular Subtypes with Conformal Uncertainty Quantification**
 >
-> Neha Kasture · Anurag Nayak · Raghav Singh · Varad Patil — IIIT Nagpur
+> Neha Kasture · Anurag Nayak · Raghav Singh · Varad Patil  IIIT Nagpur
 
 ---
 
@@ -62,8 +62,9 @@ pan-cancer-multiomics-survival/
 ## Installation
 
 ```bash
-git clone https://github.com/anuragnayak01/MOSAIC.git
-cd MOSAIC
+git clone https://github.com/anuragnayak01/pan-cancer-multiomics-survival.git
+cd pan-cancer-multiomics-survival
+
 pip install -r requirements.txt
 ```
 
@@ -134,7 +135,7 @@ python run_pipeline.py /path/to/data/ --no-resume
 | Phase | Module | Description |
 |---|---|---|
 | 1 | `cohort_assembly` | Modality intersection, IsolationForest QC, 90-day filter → **6,967 patients** |
-| 2 | `preprocessing` | VST (mRNA), CPM (miRNA), ±3σ winsorisation (CNV), ComBat batch correction |
+| 2 | `post_preprocessing` | VST (mRNA), CPM (miRNA), ±3σ winsorisation (CNV), ComBat batch correction |
 | 3 | `feature_selection` | MAD → univariate Cox-BH (FDR < 0.05) → elastic net Cox (α=0.9) → **1,366 features** |
 | 4 | `integration` | MOFA+ (K=15) → KNN graph → Leiden (γ=0.3) → **9 molecular subtypes** |
 | 5 | `survival_eda` | KM plots, UMAP, subtype biological composition |
