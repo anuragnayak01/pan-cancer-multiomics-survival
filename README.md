@@ -12,7 +12,7 @@
 
 ## Overview
 
-MOSAIC is an end-to-end computational framework for pan-cancer survival prediction from multi-omics molecular data. Applied to **6,967 TCGA patients across 30 cancer types**, it integrates mRNA expression, miRNA, copy number variation, and somatic mutation data through a strictly leakage-free eleven-phase pipeline.
+It computational framework for pan-cancer survival prediction from multi-omics molecular data. Applied to **6,967 TCGA patients across 30 cancer types**, it integrates mRNA expression, miRNA, copy number variation, and somatic mutation data through a strictly leakage-free eleven-phase pipeline.
 
 | Component | Key result |
 |---|---|
@@ -28,22 +28,22 @@ MOSAIC is an end-to-end computational framework for pan-cancer survival predicti
 ## Repository Structure
 
 ```
-MOSAIC/
-├── mosaic/                         Source modules (one per pipeline phase)
-│   ├── __init__.py
-│   ├── cohort_assembly.py          Phase 1 — QC, outlier removal, cohort construction
-│   ├── preprocessing.py            Phase 2 — Modality-specific normalisation
-│   ├── feature_selection.py        Phase 3 — MAD → Cox-BH → Elastic net (tri-stage)
-│   ├── integration.py              Phase 4 — MOFA+ factor extraction + Leiden clustering
-│   ├── survival_eda.py             Phase 5 — Kaplan-Meier plots, subtype visualisation
-│   ├── causal_analysis.py          Phase 6 — Double-robust ATE estimation (IVW pooled)
-│   ├── survival_model.py           Phase 7 — Multi-task learning (4 architectures)
-│   ├── uncertainty.py              Phase 8 — Mondrian conformal + MC Dropout + ensembles
-│   ├── interpretability.py         Phase 9 — SHAP attributions + HITL review queue
-│   ├── external_validation.py      Phase 10 — METABRIC transfer with feature alignment
-│   └── ablation_studies.py         Phase 11 — Modality/loss/task ablations + baselines
+pan-cancer-multiomics-survival/
+├── initial_preprocessing.py
+├── patches.py                          
+├── cohort_assembly.py           QC, outlier removal, cohort construction
+├── post_preprocessing.py        Modality-specific normalisation
+├── feature_selection.py         MAD → Cox-BH → Elastic net (tri-stage)
+├── integration.py               MOFA+ factor extraction + Leiden clustering
+├── survival_eda.py              Kaplan-Meier plots, subtype visualisation
+├── causal_analysis.py           Double-robust ATE estimation (IVW pooled)
+├── survival_model.py            Multi-task learning (4 architectures)
+├── uncertainty.py               Mondrian conformal + MC Dropout + ensembles
+├── interpretability.py          SHAP attributions + HITL review queue
+├── external_validation.py       METABRIC transfer with feature alignment
+└── ablation_studies.py          Modality/loss/task ablations + baselines
 │
-├── run_pipeline.py                 Master runner — Phases 1–11 with checkpointing
+├── run_pipeline.py                 Master runner  with checkpointing
 │
 ├── configs/
 │   └── default.yaml                Default hyperparameters (all phases)
@@ -196,23 +196,7 @@ print(f"C-index: {result['cindex']:.4f}")
 
 Full table: `configs/default.yaml`
 
----
-
-## Citation
-
-If you use MOSAIC in your research, please cite:
-
-```bibtex
-@article{kasture2025mosaic,
-  title   = {Causally Grounded Pan-Cancer Survival Prediction from
-             Multi-Omics Molecular Subtypes with Conformal Uncertainty
-             Quantification},
-  author  = {Kasture, Neha and Nayak, Anurag and Singh, Raghav and Patil, Varad},
-  journal = {Scientific Reports},
-  year    = {2025},
-  note    = {Under review}
-}
-```
+ 
 
 ---
 
