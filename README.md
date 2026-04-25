@@ -84,7 +84,7 @@ bash scripts/download_tcga.sh /path/to/output/
 #   mutations.parquet, clinical.parquet
 ```
 
-### METABRIC (external validation, Phase 10 only)
+### METABRIC (external validation )
 ```bash
 bash scripts/download_metabric.sh /path/to/output/
 
@@ -97,7 +97,7 @@ git clone https://github.com/cBioPortal/datahub.git
 
 ## Usage
 
-### Run full pipeline (Phases 1–11)
+### Run full pipeline  
 ```bash
 python run_pipeline.py /path/to/tcga/parquets/
 ```
