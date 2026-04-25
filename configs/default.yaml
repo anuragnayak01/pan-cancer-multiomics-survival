@@ -1,0 +1,229 @@
+# =============================================================================
+#  Default Hyperparameters
+   
+# =============================================================================
+
+# ─── Pipeline ────────────────────────────────────────────────────────────────
+pipeline:
+  random_seed: 42
+  train_val_test_split: [0.70, 0.10, 0.20]
+  output_dir: "output"
+  checkpoint_dir: "output/checkpoints"
+  results_dir: "output/paper_results"
+
+# ─── Phase 1: Cohort Assembly ────────────────────────────────────────────────
+cohort_assembly:
+  min_follow_up_days: 90           # 90-day perioperative filter
+  isolation_forest:
+    contamination: 0.01            # 1% contamination rate
+    n_estimators: 100
+    pca_components: 50             # PCA dims for IsolationForest
+    random_state: 42
+
+# ─── Phase 2: Preprocessing ──────────────────────────────────────────────────
+preprocessing:
+  mrna:
+    knn_impute_k: 5
+    low_count_threshold: 1.0       # mean count < 1 → remove gene
+    winsorise_sigma: 5.0           # ±5σ
+    combat_min_batch_size: 10      # merge TSS groups smaller than this
+    purity_covariate: true         # append ESTIMATE tumour purity
+  mirna:
+    cpm_log_transform: true
+    low_expression_cpm: 1.0        # CPM threshold
+    low_expression_min_patients: 0.10  # must be expressed in ≥10% patients
+    spearman_top_k: 200            # top correlated with PFI time
+    leakage_safe: true             # apply filter on training set only
+  cnv:
+    winsorise_sigma: 3.0           # stricter: ±3σ (GC-content artefacts)
+    apply_combat: false            # CNV batch effects need specialised methods
+  mutation:
+    min_mutation_freq: 0.02        # >2% of patients must carry mutation
+    append_tmb: true               # append tumour mutational burden
+
+# ─── Phase 3: Feature Selection ──────────────────────────────────────────────
+feature_selection:
+  mad:
+    top_k_mrna: 3000
+    top_k_mirna: 432               # keep all (432 after low-expression filter)
+    top_k_cnv: 2000
+  cox_bh:
+    fdr_threshold: 0.05
+    min_features_per_modality: 200  # safety floor
+  elastic_net:
+    alpha: 0.90                    # L1/L2 mix (0.9 = strongly L1)
+    cv_folds: 5
+    n_lambda: 100                  # candidate regularisation strengths
+    metric: "concordance_index"    # selection criterion
+
+# ─── Phase 4: Integration ─────────────────────────────────────────────────────
+integration:
+  mofa:
+    n_factors: 15
+    max_iter: 1000
+    convergence_mode: "fast"
+    seed: 42
+    use_float32: true
+  leiden:
+    knn_k: 15
+    resolution_sweep: [0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2]
+    resolution_final: 0.3          # selected by silhouette maximisation
+    kernel: "gaussian"
+    min_cluster_size: 30
+    min_clusters: 4
+    max_fraction_in_one_cluster: 0.50
+
+# ─── Phase 5: Survival EDA ────────────────────────────────────────────────────
+survival_eda:
+  km_ci_show: true
+  umap_n_neighbors: 15
+  umap_min_dist: 0.1
+  umap_random_state: 42
+  stability_n_seeds: 10            # seeds for ARI computation
+
+# ─── Phase 6: Causal Analysis ────────────────────────────────────────────────
+causal_analysis:
+  outcome: "rmst"                  # restricted mean survival time
+  rmst_horizon_days: 1825          # 5 years
+  censoring: "ipcw"                # inverse probability of censoring weighting
+  treatment_contrasts:
+    - name: "stage"
+      treatment: "late_stage"
+      control: "early_stage"
+    - name: "subtype"
+      treatment: "worst_subtype"
+      control: "best_subtype"
+    - name: "tp53"
+      treatment: "tp53_mutated"
+      control: "tp53_wildtype"
+  estimators:
+    causal_forest_dml:
+      n_estimators: 500
+      min_samples_leaf: 10
+      random_state: 42
+    aipw_forest:
+      n_estimators: 200
+      random_state: 42
+    ipw_logistic:
+      max_iter: 1000
+      C: 1.0
+  ivw_meta_analysis:
+    min_patients_per_type: 100
+    min_per_arm: 30
+  positivity:
+    propensity_min: 0.10
+    propensity_max: 0.90
+
+# ─── Phase 7: Survival Model ─────────────────────────────────────────────────
+survival_model:
+  architecture: "HardSharing"      # HardSharing | Hierarchical | CrossOmicsMTL | NMFMTLR
+  loss_balancing: "nash_mtl"       # nash_mtl | pcgrad | gradnorm | equal
+  modality_projector:
+    output_dim: 128
+    dropout: 0.30
+    activation: "gelu"
+    use_layer_norm: true
+  shared_encoder:
+    hidden_dim: 256
+    n_layers: 2
+    dropout: 0.30
+  optimiser:
+    name: "adamw"
+    lr: 1.0e-3
+    weight_decay: 1.0e-4
+  scheduler:
+    name: "cosine_annealing"
+    T_max: 100
+  training:
+    max_epochs: 100
+    batch_size: 256
+    early_stopping_patience: 15
+    early_stopping_metric: "val_cindex"
+  nash_mtl:
+    frank_wolfe_iters: 20
+  tasks:
+    - survival
+    - cancer_type
+    - stage
+    - subtype
+
+# ─── Phase 8: Uncertainty Quantification ─────────────────────────────────────
+uncertainty:
+  mondrian_conformal:
+    target_coverage: 0.90          # 1 - alpha
+    alpha: 0.10
+    stratify_by: "cancer_type"
+  mc_dropout:
+    n_passes: 50
+    keep_dropout_at_inference: true
+  deep_ensembles:
+    n_members: 5
+    different_seeds: true
+  calibration:
+    metrics: ["ibs", "d_cal", "km_cal"]
+
+# ─── Phase 9: Interpretability ───────────────────────────────────────────────
+interpretability:
+  shap:
+    n_patients: 50                 # patients to explain (KernelExplainer cost)
+    n_background_clusters: 50      # k-means background summary
+    n_perturbations: 100           # perturbations per patient
+    top_k_features: 20             # beeswarm plot
+  hitl:
+    uncertainty_flag_percentile: 75    # high uncertainty threshold
+    ambiguous_risk_lower: 25
+    ambiguous_risk_upper: 75
+
+# ─── Phase 10: External Validation ───────────────────────────────────────────
+external_validation:
+  cohorts:
+    - name: "METABRIC"
+      time_col: "OS_MONTHS"
+      event_col: "OS_STATUS"
+  feature_alignment:
+    fill_missing_modality: 0.0     # zero-fill absent modalities
+    clip_sigma: 5.0                # post-normalisation clip
+  fine_tune: false                 # apply model as-is (no retraining)
+
+# ─── Phase 11: Ablation Studies ──────────────────────────────────────────────
+ablation_studies:
+  modality_ablation:               # A1: remove each modality in turn
+    configs:
+      - name: "full"
+        modalities: ["mrna", "mirna", "cnv", "mutation"]
+      - name: "mrna_only"
+        modalities: ["mrna"]
+      - name: "no_mrna"
+        modalities: ["mirna", "cnv", "mutation"]
+      - name: "no_mirna"
+        modalities: ["mrna", "cnv", "mutation"]
+      - name: "no_cnv"
+        modalities: ["mrna", "mirna", "mutation"]
+      - name: "no_mutation"
+        modalities: ["mrna", "mirna", "cnv"]
+  loss_balancing_ablation:         # A3: compare balancing strategies
+    strategies: ["equal", "gradnorm", "pcgrad", "nash_mtl"]
+  auxiliary_task_ablation:         # A4: remove auxiliary tasks
+    configs:
+      - name: "single_task"
+        tasks: ["survival"]
+      - name: "survival_type"
+        tasks: ["survival", "cancer_type"]
+      - name: "full_mtl"
+        tasks: ["survival", "cancer_type", "stage", "subtype"]
+  statistical_baselines:           # C1: Cox-based baselines
+    - name: "coxph_clinical"
+      features: "clinical"
+    - name: "cox_enet_all_omics"
+      features: "all_omics"
+      alpha: 0.9
+    - name: "coxph_mrna_pca50"
+      features: "mrna_pca"
+      n_components: 50
+  deep_learning_baselines:         # C2: DL baselines
+    - name: "deepsurv"
+      hidden_layers: [256, 128]
+      dropout: 0.3
+    - name: "random_survival_forest"
+      n_estimators: 100
+      min_samples_leaf: 10

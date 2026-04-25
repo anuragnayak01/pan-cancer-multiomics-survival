@@ -1,2 +1,0 @@
-cancer_type,treatment,n_total,n_treated,n_control,ate_days,ate_se,ate_lb,ate_ub
-BRCA,subtype,268,202,66,194.36,82.7082,32.25,356.47

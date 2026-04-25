@@ -1,7 +1,0 @@
-method,cindex,type
-CoxPH (clinical only),0.4794,statistical
-CoxPH (mRNA PCA-50),0.7863,statistical
-Cox Elastic Net,0.7379,statistical
-Random Survival Forest,0.7753,statistical
-BlockForest (approx),0.7495,statistical
-Your Model (Proposed),0.7674,proposed

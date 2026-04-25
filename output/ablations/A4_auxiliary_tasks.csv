@@ -1,5 +1,0 @@
-config,cindex,n_aux_tasks
-Survival only (single-task),0.7676,0
-+Cancer type,0.7785,1
-+Cancer type +Stage,0.769,2
-+Cancer type +Stage +Subtype (full),0.7803,3
