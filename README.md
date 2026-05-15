@@ -6,7 +6,7 @@
 
 > **Causally Grounded Pan-Cancer Survival Prediction from Multi-Omics Molecular Subtypes with Conformal Uncertainty Quantification**
 >
-> Neha Kasture · Anurag Nayak · Raghav Singh · Varad Patil  IIIT Nagpur
+>   Anurag Nayak · Raghav Singh · Varad Patil  IIIT Nagpur
 
 ---
 
