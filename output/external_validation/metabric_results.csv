@@ -1,0 +1,3 @@
+model,c_index,note
+4-modality (zero-filled miRNA),0.568,Out-of-distribution artifact due to zero filling
+3-modality (mRNA + CNV + mutation),0.692,Evaluated on matching modalities without zero filling
