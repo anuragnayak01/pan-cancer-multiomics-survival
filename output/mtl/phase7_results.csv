@@ -1,0 +1,5 @@
+architecture,loss_balancing,test_cindex,test_auc_sub,test_auc_stage,test_auc_type
+HardSharing,nash_mtl,0.776,0.9974,0.7847,0.9927
+Hierarchical,nash_mtl,0.7683,0.9972,0.7835,0.9946
+CrossOmics,nash_mtl,0.7722,0.998,0.7769,0.9889
+NMFMTLR,nash_mtl,0.6531,0.9985,0.7483,0.9731
