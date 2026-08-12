@@ -1,0 +1,3 @@
+contrast,estimator,ate_days,ci_95,p_value,e_value,interpretation
+Stage (late vs early),CausalForestDML,-235.09,"[-364.11, -106.07]",< 0.001,1.11,Robust to moderate unobserved confounding
+TP53_somatic_mutation_contrast,CausalForestDML,-16.13,"[-148.62, +116.36]",0.79,1.0,Null pan-cancer effect; unassignable biological marker
