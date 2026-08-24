@@ -14,14 +14,7 @@
 
 It computational framework for pan-cancer survival prediction from multi-omics molecular data. Applied to **6,967 TCGA patients across 30 cancer types**, it integrates mRNA expression, miRNA, copy number variation, and somatic mutation data through a strictly leakage-free eleven-phase pipeline.
 
-| Component | Key result |
-|---|---|
-| MOFA+ molecular subtypes | 9 subtypes, ARI = 0.9996 ± 0.0009 |
-| Survival discrimination | C = 0.776 (95% CI [0.752, 0.799]) |
-| Risk stratification | log-rank p = 3.44×10⁻⁵⁸ |
-| Causal stage effect | −100 to −235 days RMST (four estimators) |
-| Conformal coverage | 99.3% (target: 90%) |
-| External validation | C = 0.568 on METABRIC (n=1,980) |
+ ![Uploading system_architecture.jpg…]()
 
 ---
 
