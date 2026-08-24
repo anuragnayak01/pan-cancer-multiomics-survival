@@ -14,7 +14,9 @@
 
 It computational framework for pan-cancer survival prediction from multi-omics molecular data. Applied to **6,967 TCGA patients across 30 cancer types**, it integrates mRNA expression, miRNA, copy number variation, and somatic mutation data through a strictly leakage-free eleven-phase pipeline.
 
- ![Uploading system_architecture.jpg…]()
+ ## Architecture
+
+![Architecture Diagram](system_architecture.jpg)
 
 ---
 
